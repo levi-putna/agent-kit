@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Environment & secrets (GITHUB_TOKEN, MCP API keys, etc.)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude Code — personal permission overrides, not shared with the team
+.claude/settings.local.json
+
+# MCP configs — agent-kit writes API keys and env values here after install
+.cursor/mcp.json
+.windsurf/mcp.json
+.vscode/mcp.json
+.mcp.json
