@@ -44,7 +44,7 @@ export async function installed() {
   }
 
   if (!hasProjectSkills && !hasProjectMcp && !hasGlobalSkills) {
-    console.log('\n  Nothing installed yet. Run: agent-kit add <owner/repo>')
+    console.log('\n  Nothing installed yet. Run: npx @levi-putna/agent-kit@latest add <owner/repo>')
   }
 
   console.log()

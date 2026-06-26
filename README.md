@@ -1,6 +1,6 @@
 # @levi-putna/agent-kit
 
-A configuration manager for AI coding agents. Install skills and MCP servers from any public GitHub repo into Claude, Cursor, Windsurf, and other agents — globally or per project.
+A configuration manager for AI coding agents. Install skills and MCP servers from any public GitHub repo into Claude, Cursor, Windsurf, and other agents, globally or per project.
 
 [![GitHub](https://img.shields.io/github/stars/levi-putna/agent-kit?style=social)](https://github.com/levi-putna/agent-kit) [![npm version](https://img.shields.io/npm/v/@levi-putna/agent-kit)](https://www.npmjs.com/package/@levi-putna/agent-kit) [![npm downloads](https://img.shields.io/npm/dm/@levi-putna/agent-kit)](https://www.npmjs.com/package/@levi-putna/agent-kit) [![Node.js 18+](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 
@@ -10,9 +10,9 @@ A configuration manager for AI coding agents. Install skills and MCP servers fro
 
 ## Table of contents
 
-1. [For users](#for-users) — install and use agent-kit with any skills repo
-2. [For skill & MCP developers](#for-skill--mcp-developers) — publish your own skills and MCP definitions
-3. [For agent-kit developers](#for-agent-kit-developers) — run, test, and publish the CLI itself
+1. [For users](#for-users): install and use `@levi-putna/agent-kit` with any skills repo
+2. [For skill & MCP developers](#for-skill--mcp-developers): publish your own skills and MCP definitions
+3. [For agent-kit developers](#for-agent-kit-developers): run, test, and publish the CLI itself
 
 ---
 
@@ -20,41 +20,51 @@ A configuration manager for AI coding agents. Install skills and MCP servers fro
 
 ### Install
 
-```sh
-npm install -g @levi-putna/agent-kit
-```
-
-Or run without installing (use `@latest` so npx does not reuse a cached older release):
+**Recommended:** run via `npx` with the scoped package name and `@latest`. This always uses the current release and avoids clashes with other npm packages named `agent-kit`:
 
 ```sh
 npx @levi-putna/agent-kit@latest add owner/repo
 ```
 
-The same `@latest` suffix works for any command, for example `npx @levi-putna/agent-kit@latest list owner/repo`.
+Use the same prefix for any command:
+
+```sh
+npx @levi-putna/agent-kit@latest list owner/repo
+npx @levi-putna/agent-kit@latest installed
+npx @levi-putna/agent-kit@latest update
+```
+
+**Alternative:** install globally if you prefer a short command on your PATH:
+
+```sh
+npm install -g @levi-putna/agent-kit@latest
+```
+
+After a global install, the binary on your PATH is `agent-kit`. Only install the `@levi-putna/agent-kit` package to get this tool.
 
 ### Commands
 
 | Command | Description |
 | ------- | ----------- |
-| `agent-kit list <owner/repo>` | Browse skills and MCP servers available in a repo |
-| `agent-kit add <owner/repo> [options]` | Install skills and/or MCP servers |
-| `agent-kit installed` | List what is installed in the current project or globally |
-| `agent-kit update` | Pull the latest versions of project-installed skills from source repos |
-| `agent-kit remove <name>` | Remove a skill or MCP server by name |
+| `npx @levi-putna/agent-kit@latest list <owner/repo>` | Browse skills and MCP servers available in a repo |
+| `npx @levi-putna/agent-kit@latest add <owner/repo> [options]` | Install skills and/or MCP servers |
+| `npx @levi-putna/agent-kit@latest installed` | List what is installed in the current project or globally |
+| `npx @levi-putna/agent-kit@latest update` | Pull the latest versions of project-installed skills from source repos |
+| `npx @levi-putna/agent-kit@latest remove <name>` | Remove a skill or MCP server by name |
 
 ### Using a skills repo
 
-Point agent-kit at any public GitHub repo that follows the [expected layout](#repository-layout). The repo is referenced as `owner/repo`:
+Point `@levi-putna/agent-kit` at any public GitHub repo that follows the [expected layout](#repository-layout). The repo is referenced as `owner/repo`:
 
 ```sh
-agent-kit list owner/repo
-agent-kit add owner/repo
+npx @levi-putna/agent-kit@latest list owner/repo
+npx @levi-putna/agent-kit@latest add owner/repo
 ```
 
 To use a specific branch instead of `main`:
 
 ```sh
-agent-kit add owner/repo@develop
+npx @levi-putna/agent-kit@latest add owner/repo@develop
 ```
 
 ### `add` options
@@ -63,70 +73,70 @@ agent-kit add owner/repo@develop
 | ------ | ----- | ----------- |
 | `--skill <name>` | | Install a specific skill (skips the interactive picker) |
 | `--mcp <name>` | | Install a specific MCP server (skips the interactive picker) |
-| `--global` | `-g` | Install globally — available across all projects |
+| `--global` | `-g` | Install globally (available across all projects) |
 | `--project` | `-p` | Install to the current project |
 | `--agent <name>` | | Target a specific agent (use with `--global` or `--project`) |
 
-If you omit `--global` and `--project`, agent-kit detects which agents are present in your project (`.claude`, `.cursor`, `.windsurf`, etc.) and walks you through scope and selection interactively.
+If you omit `--global` and `--project`, `@levi-putna/agent-kit` detects which agents are present in your project (`.claude`, `.cursor`, `.windsurf`, etc.) and walks you through scope and selection interactively.
 
 #### Examples
 
 ```sh
-# Interactive — browse and pick skills/MCP servers
-agent-kit add owner/repo
+# Interactive: browse and pick skills/MCP servers
+npx @levi-putna/agent-kit@latest add owner/repo
 
 # Install a specific skill
-agent-kit add owner/repo --skill code-review
+npx @levi-putna/agent-kit@latest add owner/repo --skill code-review
 
 # Install a specific MCP server
-agent-kit add owner/repo --mcp postgres
+npx @levi-putna/agent-kit@latest add owner/repo --mcp postgres
 
 # Install globally (prompts for Claude Code and/or Cursor)
-agent-kit add owner/repo --global
+npx @levi-putna/agent-kit@latest add owner/repo --global
 
 # Install globally to Cursor only
-agent-kit add owner/repo --skill code-review --global --agent cursor
+npx @levi-putna/agent-kit@latest add owner/repo --skill code-review --global --agent cursor
 
 # Install to the current project
-agent-kit add owner/repo --project
+npx @levi-putna/agent-kit@latest add owner/repo --project
 
 # Install to a specific project agent
-agent-kit add owner/repo --skill code-review --project --agent windsurf
+npx @levi-putna/agent-kit@latest add owner/repo --skill code-review --project --agent windsurf
 ```
 
 ### Global vs project installs
 
-**Global** — skills are written directly to your user directory:
+**Global:** skills are written directly to your user directory:
 
-- `~/.claude/skills/` — Claude Code and Claude desktop app
-- `~/.cursor/skills/` — Cursor (all projects)
+- `~/.claude/skills/`: Claude Code and Claude desktop app
+- `~/.cursor/skills/`: Cursor (all projects)
 
-**Project** — skills are written to `.agents/skills/` with symlinks from each agent directory you choose. Agent directories are created automatically if they do not exist yet. An `agent-kit-lock.json` file is created so teammates can reproduce the same setup.
+**Project:** skills are written to `.agents/skills/` with symlinks from each agent directory you choose. Agent directories are created automatically if they do not exist yet. An `agent-kit-lock.json` file is created so teammates can reproduce the same setup.
 
 ```sh
-agent-kit add owner/repo --project
-agent-kit update    # refresh project skills from their source repos
+npx @levi-putna/agent-kit@latest add owner/repo --project
+npx @levi-putna/agent-kit@latest update    # refresh project skills from their source repos
 ```
 
 ### Managing installed skills
 
 ```sh
-agent-kit installed          # list what's installed
-agent-kit update             # pull latest versions from source repos (project scope)
-agent-kit remove code-review # remove a skill or MCP server by name
+npx @levi-putna/agent-kit@latest installed          # list what's installed
+npx @levi-putna/agent-kit@latest update             # pull latest versions from source repos (project scope)
+npx @levi-putna/agent-kit@latest remove code-review # remove a skill or MCP server by name
 ```
 
 ### MCP server installation
 
-When installing an MCP server, agent-kit will:
+When installing an MCP server, `@levi-putna/agent-kit` will:
 
 1. Show you the server definition and what env vars it needs
 2. Prompt you for any required values (API keys, endpoints, etc.)
 3. Ask permission before writing to each config file
-4. Merge the server entry — never overwriting other servers you have already configured
+4. Merge the server entry without overwriting other servers you have already configured
 
 ```sh
-agent-kit add owner/repo --mcp my-server --global
+npx @levi-putna/agent-kit@latest add owner/repo --mcp my-server --global
 ```
 
 ### Supported agents
@@ -138,8 +148,8 @@ agent-kit add owner/repo --mcp my-server --global
 | Cursor | `~/.cursor/skills/` (global) · `.cursor/skills/` (project) | `.cursor/mcp.json` |
 | Windsurf | `.windsurf/skills/` | `.windsurf/mcp.json` |
 | GitHub Copilot | `.github/skills/` | `.vscode/mcp.json` |
-| Cline | `.cline/skills/` | — |
-| OpenCode | `.opencode/skills/` | — |
+| Cline | `.cline/skills/` | None |
+| OpenCode | `.opencode/skills/` | None |
 
 Valid values for `--agent`: `claude`, `cursor`, `windsurf`, `copilot`, `cline`, `opencode`.
 
@@ -147,22 +157,22 @@ Valid values for `--agent`: `claude`, `cursor`, `windsurf`, `copilot`, `cline`, 
 
 ## For skill & MCP developers
 
-Publish skills and MCP server definitions in a GitHub repo. Users install them with agent-kit — no npm package, no registry, no approval process.
+Publish skills and MCP server definitions in a GitHub repo. Users install them with `@levi-putna/agent-kit`. No npm package, registry, or approval process is required.
 
 ```sh
-agent-kit add your-username/your-repo
-agent-kit add your-username/your-repo --skill my-skill
-agent-kit add your-username/your-repo --mcp my-server
+npx @levi-putna/agent-kit@latest add your-username/your-repo
+npx @levi-putna/agent-kit@latest add your-username/your-repo --skill my-skill
+npx @levi-putna/agent-kit@latest add your-username/your-repo --mcp my-server
 ```
 
 ### How publishing works
 
 1. You create a public GitHub repo with a `skills/` and/or `mcp/` directory.
-2. Users run `agent-kit add your-username/your-repo`.
-3. agent-kit fetches the repo via the GitHub API and installs the selected items into the user's agent directories.
-4. When you push updates, users can run `agent-kit update` to pull the latest skill files (for project installs tracked in `agent-kit-lock.json`).
+2. Users run `npx @levi-putna/agent-kit@latest add your-username/your-repo`.
+3. `@levi-putna/agent-kit` fetches the repo via the GitHub API and installs the selected items into the user's agent directories.
+4. When you push updates, users can run `npx @levi-putna/agent-kit@latest update` to pull the latest skill files (for project installs tracked in `agent-kit-lock.json`).
 
-There is nothing to submit or register — if the repo is public and follows the layout below, it works immediately.
+There is nothing to submit or register. If the repo is public and follows the layout below, it works immediately.
 
 ### Quick start
 
@@ -191,8 +201,8 @@ gh repo create my-agent-skills --public --source=. --push
 Verify it is discoverable, then install it locally:
 
 ```sh
-agent-kit list your-username/my-agent-skills
-agent-kit add your-username/my-agent-skills --skill hello-world --project
+npx @levi-putna/agent-kit@latest list your-username/my-agent-skills
+npx @levi-putna/agent-kit@latest add your-username/my-agent-skills --skill hello-world --project
 ```
 
 ### Repository requirements
@@ -218,12 +228,12 @@ your-skills-repo/
   mcp/
     postgres/
       mcp.json              # required
-      README.md             # optional — documentation for humans browsing the repo
+      README.md             # optional documentation for humans browsing the repo
 ```
 
-- **Skills** — each subfolder of `skills/` that contains a `SKILL.md` is installable. The folder name is what users pass to `--skill`.
-- **MCP servers** — each subfolder of `mcp/` that contains an `mcp.json` is installable. The folder name is what users pass to `--mcp` and becomes the key in the agent's MCP config.
-- **Supporting files** — any file in the same folder as `SKILL.md` is copied alongside it during install. Keep supporting files in the skill folder root (nested subdirectories are not fetched).
+- **Skills:** each subfolder of `skills/` that contains a `SKILL.md` is installable. The folder name is what users pass to `--skill`.
+- **MCP servers:** each subfolder of `mcp/` that contains an `mcp.json` is installable. The folder name is what users pass to `--mcp` and becomes the key in the agent's MCP config.
+- **Supporting files:** any file in the same folder as `SKILL.md` is copied alongside it during install. Keep supporting files in the skill folder root (nested subdirectories are not fetched).
 
 You can publish skills only, MCP only, or both in the same repo.
 
@@ -256,7 +266,7 @@ When asked to review code, follow these steps:
 | Field | Required | Description |
 | ----- | -------- | ----------- |
 | `name` | Recommended | Skill identifier. Should match the folder name. |
-| `description` | **Required** | Tells the agent **when** to activate this skill. Be specific — include trigger phrases the user might say. |
+| `description` | **Required** | Tells the agent **when** to activate this skill. Be specific and include trigger phrases the user might say. |
 
 The `description` is the most important field. Agents read it to decide whether to load the skill. A vague description like "Helps with code" will rarely activate. A good description names the task and lists example triggers:
 
@@ -266,11 +276,11 @@ description: Review pull requests for bugs and security issues. Use when asked t
 
 #### Writing effective skill content
 
-- **Start with the goal** — state what the agent should accomplish in the first paragraph.
+- **Start with the goal:** state what the agent should accomplish in the first paragraph.
 - **Use numbered steps** for multi-step workflows.
 - **Include examples** of good and bad output where helpful.
 - **Reference supporting files** in the skill body so the agent knows they exist (e.g. "Use the checklist in `checklist.md`").
-- **Keep it focused** — one skill per task. Split large workflows into separate skills.
+- **Keep it focused:** one skill per task. Split large workflows into separate skills.
 
 #### Example: skill with supporting files
 
@@ -303,14 +313,14 @@ When proposing a new endpoint, include:
 
 When a user installs your skill:
 
-- **Global install** — files are written to `~/.claude/skills/<name>/` and/or `~/.cursor/skills/<name>/`.
-- **Project install** — files are written to `.agents/skills/<name>/` with symlinks from each chosen agent directory (`.cursor/skills/`, `.claude/skills/`, etc.). An entry is added to `agent-kit-lock.json` so teammates can reproduce the setup.
+- **Global install:** files are written to `~/.claude/skills/<name>/` and/or `~/.cursor/skills/<name>/`.
+- **Project install:** files are written to `.agents/skills/<name>/` with symlinks from each chosen agent directory (`.cursor/skills/`, `.claude/skills/`, etc.). An entry is added to `agent-kit-lock.json` so teammates can reproduce the setup.
 
 ---
 
 ### Creating an MCP server definition
 
-An MCP definition tells agent-kit how to configure an MCP server in the user's agent. You are **not** publishing the MCP server binary itself — you are publishing a recipe that points to an npm package, executable, or script the user already has (or that `npx` can fetch).
+An MCP definition tells `@levi-putna/agent-kit` how to configure an MCP server in the user's agent. You are **not** publishing the MCP server binary itself. You are publishing a recipe that points to an npm package, executable, or script the user already has (or that `npx` can fetch).
 
 #### mcp.json format
 
@@ -361,9 +371,9 @@ Each key under `env` maps to an object with:
 }
 ```
 
-#### What agent-kit writes
+#### What `@levi-putna/agent-kit` writes
 
-During install, agent-kit prompts for env values, then merges an entry into the user's MCP config. The written entry looks like:
+During install, `@levi-putna/agent-kit` prompts for env values, then merges an entry into the user's MCP config. The written entry looks like:
 
 ```json
 {
@@ -379,7 +389,7 @@ During install, agent-kit prompts for env values, then merges an entry into the 
 }
 ```
 
-agent-kit **merges** into existing config files — it never removes other MCP servers the user has configured.
+`@levi-putna/agent-kit` **merges** into existing config files. It never removes other MCP servers the user has configured.
 
 | Install scope | Config files updated |
 | ------------- | -------------------- |
@@ -416,7 +426,7 @@ agent-kit **merges** into existing config files — it never removes other MCP s
 }
 ```
 
-Add a `README.md` in the MCP folder to document setup steps, links to your npm package, and where users can get API keys. This is for humans browsing your repo — agent-kit uses `mcp.json` for install.
+Add a `README.md` in the MCP folder to document setup steps, links to your npm package, and where users can get API keys. This is for humans browsing your repo. `@levi-putna/agent-kit` uses `mcp.json` for install.
 
 ---
 
@@ -430,23 +440,23 @@ Add a `README.md` in the MCP folder to document setup steps, links to your npm p
 
 ```sh
 # Browse what's available
-agent-kit list your-username/your-repo
+npx @levi-putna/agent-kit@latest list your-username/your-repo
 
 # Install everything interactively
-agent-kit add your-username/your-repo
+npx @levi-putna/agent-kit@latest add your-username/your-repo
 
 # Install specific items
-agent-kit add your-username/your-repo --skill code-review
-agent-kit add your-username/your-repo --mcp postgres
+npx @levi-putna/agent-kit@latest add your-username/your-repo --skill code-review
+npx @levi-putna/agent-kit@latest add your-username/your-repo --mcp postgres
 
 # Install from a non-default branch
-agent-kit add your-username/your-repo@develop
+npx @levi-putna/agent-kit@latest add your-username/your-repo@develop
 ```
 
 6. **Ship updates** by pushing to GitHub. Users with project installs can refresh skills with:
 
 ```sh
-agent-kit update
+npx @levi-putna/agent-kit@latest update
 ```
 
 ---
@@ -456,28 +466,28 @@ agent-kit update
 Run through this checklist on your own machine before sharing your repo:
 
 ```sh
-# 1. Confirm agent-kit can see your skills and MCP servers
-agent-kit list your-username/your-repo
+# 1. Confirm @levi-putna/agent-kit can see your skills and MCP servers
+npx @levi-putna/agent-kit@latest list your-username/your-repo
 
 # 2. Install a skill to a test project
 mkdir /tmp/agent-kit-test && cd /tmp/agent-kit-test
-agent-kit add your-username/your-repo --skill my-skill --project
+npx @levi-putna/agent-kit@latest add your-username/your-repo --skill my-skill --project
 
 # 3. Verify files landed in the right place
 ls .agents/skills/my-skill/
 cat .agents/skills/my-skill/SKILL.md
 
 # 4. Install an MCP server and confirm the config was merged
-agent-kit add your-username/your-repo --mcp my-server --project --agent cursor
+npx @levi-putna/agent-kit@latest add your-username/your-repo --mcp my-server --project --agent cursor
 cat .cursor/mcp.json
 
 # 5. Test updating after you push a change
-agent-kit update
+npx @levi-putna/agent-kit@latest update
 ```
 
 **Verify:**
 
-- [ ] `agent-kit list` shows all your skills and MCP servers
+- [ ] `npx @levi-putna/agent-kit@latest list` shows all your skills and MCP servers
 - [ ] `SKILL.md` frontmatter has a clear, specific `description`
 - [ ] Supporting files appear alongside `SKILL.md` after install
 - [ ] MCP env prompts show helpful descriptions
@@ -493,19 +503,19 @@ agent-kit update
 | `No skills or MCP servers found` | Repo is private, wrong branch, or missing `skills/` / `mcp/` directory | Make the repo public, confirm the branch, check folder names |
 | `Skill "foo" not found` | Folder name mismatch | Folder must be `skills/foo/` and users pass `--skill foo` |
 | `Could not fetch skill` | Missing `SKILL.md` | Every skill folder needs a `SKILL.md` file |
-| Supporting files missing after install | Files are in a nested subdirectory | Move files to the skill folder root — only top-level files are fetched |
-| Users on a different default branch | agent-kit defaults to `main` | Tell users to use `owner/repo@your-branch` |
+| Supporting files missing after install | Files are in a nested subdirectory | Move files to the skill folder root. Only top-level files are fetched |
+| Users on a different default branch | `@levi-putna/agent-kit` defaults to `main` | Tell users to use `owner/repo@your-branch` |
 | Rate limit errors during development | Unauthenticated GitHub API limits | Set `GITHUB_TOKEN` in the environment |
 
 ---
 
 ### Best practices
 
-- **One repo or many** — a single `my-skills` repo works well for a personal collection; separate repos make sense for large or independently versioned packages.
-- **Document your repo** — add a README explaining what each skill does and what MCP servers need (API keys, accounts, etc.).
-- **Version with git** — tag releases (`v1.0.0`) if you want users to pin to a branch or tag via `owner/repo@v1.0.0`.
-- **Keep secrets out of the repo** — use the `env` block in `mcp.json` to prompt users for API keys at install time. Never commit real credentials.
-- **Test across agents** — if your skill is agent-agnostic, test a project install with both Cursor and Claude Code to confirm symlinks work.
+- **One repo or many:** a single `my-skills` repo works well for a personal collection; separate repos make sense for large or independently versioned packages.
+- **Document your repo:** add a README explaining what each skill does and what MCP servers need (API keys, accounts, etc.).
+- **Version with git:** tag releases (`v1.0.0`) if you want users to pin to a branch or tag via `owner/repo@v1.0.0`.
+- **Keep secrets out of the repo:** use the `env` block in `mcp.json` to prompt users for API keys at install time. Never commit real credentials.
+- **Test across agents:** if your skill is agent-agnostic, test a project install with both Cursor and Claude Code to confirm symlinks work.
 
 ---
 
@@ -531,7 +541,7 @@ Tests run automatically before every `npm publish` via the `prepublishOnly` scri
 
 ### Run the CLI locally
 
-Without installing globally — useful while iterating:
+Without installing globally, which is useful while iterating:
 
 ```sh
 node bin/cli.js --help
@@ -539,11 +549,11 @@ node bin/cli.js list owner/repo
 node bin/cli.js add owner/repo --project
 ```
 
-Or link it globally so the `agent-kit` command points at your local source:
+Or link it globally so the `agent-kit` binary points at your local source (the global binary name comes from `package.json`; users should still prefer `npx @levi-putna/agent-kit@latest` for the published package):
 
 ```sh
 npm link
-agent-kit --help
+npx @levi-putna/agent-kit@latest --help
 ```
 
 Unlink when you are done:
@@ -590,7 +600,7 @@ npm version major   # 0.1.0 → 1.0.0  (breaking changes)
 
 This updates `package.json` and creates a git tag automatically.
 
-2. **Publish to npm** — tests run automatically via `prepublishOnly`:
+2. **Publish to npm.** Tests run automatically via `prepublishOnly`:
 
 ```sh
 npm publish --access public

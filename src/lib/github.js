@@ -3,7 +3,7 @@ const GITHUB_RAW = 'https://raw.githubusercontent.com'
 
 // Parse "owner/repo" into parts, with optional branch (owner/repo@branch)
 export function parseRepo(repoArg) {
-  if (!repoArg) throw new Error('No repository specified. Usage: agent-kit add owner/repo')
+  if (!repoArg) throw new Error('No repository specified. Usage: npx @levi-putna/agent-kit@latest add owner/repo')
   const [repoPath, branch = 'main'] = repoArg.split('@')
   const parts = repoPath.split('/')
   if (parts.length !== 2) throw new Error(`Invalid repo format: "${repoArg}". Expected owner/repo`)

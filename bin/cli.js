@@ -28,28 +28,31 @@ function flagValue(args, flag) {
 
 function printHelp() {
   console.log(`
-  @levi-putna/agent-kit — AI agent configuration manager
+  @levi-putna/agent-kit: AI agent configuration manager
+
+  Recommended:
+    npx @levi-putna/agent-kit@latest <command> [options]
 
   Usage:
-    agent-kit add <owner/repo> [options]   Install skills and/or MCP servers
-    agent-kit list <owner/repo>            Browse what's available in a repo
-    agent-kit installed                    Show locally installed skills/MCP
-    agent-kit update                       Update installed skills to latest
-    agent-kit remove <name>                Remove a skill or MCP entry
+    npx @levi-putna/agent-kit@latest add <owner/repo> [options]   Install skills and/or MCP servers
+    npx @levi-putna/agent-kit@latest list <owner/repo>            Browse what's available in a repo
+    npx @levi-putna/agent-kit@latest installed                    Show locally installed skills/MCP
+    npx @levi-putna/agent-kit@latest update                       Update installed skills to latest
+    npx @levi-putna/agent-kit@latest remove <name>                Remove a skill or MCP entry
 
   Options for add:
     --skill <name>    Install a specific skill
     --mcp <name>      Install a specific MCP server
     --global, -g      Install globally (~/.claude/skills/, ~/.cursor/skills/)
-    --agent <name>    Target agent (claude, cursor, windsurf, …) — use with --global or --project
+    --agent <name>    Target agent (claude, cursor, windsurf, …); use with --global or --project
     --project, -p     Install to project (.agents/skills/ + chosen agent directories)
 
   Examples:
-    agent-kit add levi-putna/my-skills
-    agent-kit add levi-putna/my-skills --skill code-review
-    agent-kit add levi-putna/my-skills --skill code-review --project --agent cursor
-    agent-kit add levi-putna/my-skills --mcp postgres --global
-    agent-kit list levi-putna/my-skills
+    npx @levi-putna/agent-kit@latest add levi-putna/my-skills
+    npx @levi-putna/agent-kit@latest add levi-putna/my-skills --skill code-review
+    npx @levi-putna/agent-kit@latest add levi-putna/my-skills --skill code-review --project --agent cursor
+    npx @levi-putna/agent-kit@latest add levi-putna/my-skills --mcp postgres --global
+    npx @levi-putna/agent-kit@latest list levi-putna/my-skills
 `)
 }
 
