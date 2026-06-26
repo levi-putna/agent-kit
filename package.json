@@ -1,40 +1,43 @@
 {
-  "name": "@levi-putna/agent-kit",
-  "version": "0.1.0",
-  "description": "A configuration manager for AI coding agents — install skills and MCP servers from any GitHub repo",
-  "type": "module",
-  "bin": {
-    "agent-kit": "./bin/cli.js"
-  },
-  "files": [
-    "bin",
-    "src"
-  ],
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "scripts": {
-    "test": "node --test src/lib/agents.test.js src/lib/lockfile.test.js src/lib/mcp.test.js src/lib/installer.test.js src/lib/github.test.js",
-    "prepublishOnly": "npm test"
-  },
-  "dependencies": {
-    "@clack/prompts": "^0.9.0"
-  },
-  "keywords": [
-    "claude",
-    "cursor",
-    "agent",
-    "skills",
-    "mcp",
-    "ai"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/levi-putna/agent-kit.git"
-  },
-  "bugs": {
-    "url": "https://github.com/levi-putna/agent-kit/issues"
-  },
-  "homepage": "https://github.com/levi-putna/agent-kit#readme",
-  "license": "MIT"
+    "name": "@levi-putna/agent-kit",
+    "version": "0.1.1",
+    "description": "A configuration manager for AI coding agents — install skills and MCP servers from any GitHub repo",
+    "type": "module",
+    "bin": {
+        "agent-kit": "bin/cli.js"
+    },
+    "files": [
+        "bin",
+        "src"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "scripts": {
+        "test": "node --test src/lib/agents.test.js src/lib/lockfile.test.js src/lib/mcp.test.js src/lib/installer.test.js src/lib/github.test.js",
+        "prepublishOnly": "npm test"
+    },
+    "dependencies": {
+        "@clack/prompts": "^0.9.0"
+    },
+    "keywords": [
+        "claude",
+        "cursor",
+        "agent",
+        "skills",
+        "mcp",
+        "ai"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/levi-putna/agent-kit.git"
+    },
+    "bugs": {
+        "url": "https://github.com/levi-putna/agent-kit/issues"
+    },
+    "homepage": "https://github.com/levi-putna/agent-kit#readme",
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    }
 }

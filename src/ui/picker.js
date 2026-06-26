@@ -36,21 +36,33 @@ export async function pickItems({ skills, mcpServers }) {
 
 // Ask user to choose install scope (global or project)
 export async function pickScope({ detectedAgents }) {
-  const options = [
-    {
-      value: 'global',
-      label: 'Global — available in all projects (~/.claude/skills/, ~/.cursor/skills/)',
-    },
-  ]
+  const hasDetectedAgents = detectedAgents.length > 0
 
-  if (detectedAgents.length > 0) {
-    const agentNames = detectedAgents.map(a => a.name).join(', ')
-    options.push({ value: 'project', label: `Project — install for detected agents (${agentNames})` })
+  if (!hasDetectedAgents) {
+    p.log.info(
+      'No AI coding tools were detected in this project (no .claude, .cursor, .windsurf, etc.).\n' +
+      '  Global install is recommended — skills will be available in every project.\n' +
+      '  You can also set up this project now and choose which tools to configure.',
+    )
   }
+
+  const projectLabel = hasDetectedAgents
+    ? `Project — install for this repo (detected: ${detectedAgents.map(a => a.name).join(', ')})`
+    : 'Project — set up this repo and choose which tools to configure'
 
   const scope = await p.select({
     message: 'Install scope:',
-    options,
+    initialValue: hasDetectedAgents ? 'project' : 'global',
+    options: [
+      {
+        value: 'global',
+        label: 'Global — available in all projects (~/.claude/skills/, ~/.cursor/skills/)',
+      },
+      {
+        value: 'project',
+        label: projectLabel,
+      },
+    ],
   })
 
   if (p.isCancel(scope)) { p.cancel('Cancelled'); process.exit(0) }
@@ -75,14 +87,31 @@ export async function pickGlobalAgents({ globalSkillAgents }) {
   return picked
 }
 
-// Ask user to pick which detected agents to install skills for
-export async function pickAgents(detectedAgents) {
+// Ask user to pick which project agents to install skills and MCP for
+export async function pickProjectAgents({ projectAgents }) {
+  const detected = projectAgents.filter(a => a.detected)
+  const hasDetected = detected.length > 0
+
+  if (!hasDetected) {
+    p.log.info(
+      'Choose the tools you use in this project. agent-kit will create the required directories and link skills for you.',
+    )
+  }
+
   const picked = await p.multiselect({
-    message: 'Install skills for which agents?',
-    options: detectedAgents.map(a => ({ value: a.key, label: a.name })),
-    initialValues: detectedAgents.map(a => a.key),
+    message: 'Set up which tools for this project?',
+    options: projectAgents.map(a => ({
+      value: a.key,
+      label: a.detected ? `${a.name} (detected)` : `${a.name} (not set up yet)`,
+    })),
+    initialValues: detected.map(a => a.key),
+    required: true,
   })
   if (p.isCancel(picked)) { p.cancel('Cancelled'); process.exit(0) }
+  if (picked.length === 0) {
+    p.cancel('No tools selected.')
+    process.exit(0)
+  }
   return picked
 }
 

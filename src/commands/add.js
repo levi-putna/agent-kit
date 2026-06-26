@@ -1,6 +1,6 @@
 import * as p from '@clack/prompts'
 import { parseRepo, listSkills, listMcpServers, fetchSkillFiles, fetchMcpDefinition } from '../lib/github.js'
-import { detectAgents, GLOBAL_PATHS, GLOBAL_SKILL_AGENTS, AGENTS } from '../lib/agents.js'
+import { detectAgents, listProjectAgents, GLOBAL_PATHS, GLOBAL_SKILL_AGENTS, AGENTS } from '../lib/agents.js'
 import { installSkillGlobal, installSkillFiles, symlinkOrCopy } from '../lib/installer.js'
 import { mergeMcpServer, buildServerConfig } from '../lib/mcp.js'
 import { addSkillToLockfile, addMcpToLockfile } from '../lib/lockfile.js'
@@ -8,7 +8,7 @@ import { canonicalSkillsDir } from '../lib/agents.js'
 import {
   pickItems,
   pickScope,
-  pickAgents,
+  pickProjectAgents,
   pickGlobalAgents,
   confirmWrite,
   promptEnvVars,
@@ -64,8 +64,11 @@ export async function add(repoArg, flags) {
     if (globalAgentKeys.length === 0) {
       globalAgentKeys = await pickGlobalAgents({ globalSkillAgents: GLOBAL_SKILL_AGENTS })
     }
-  } else if (scope === 'project' && detectedAgents.length > 0) {
-    agentKeys = await pickAgents(detectedAgents)
+  } else if (scope === 'project') {
+    agentKeys = resolveProjectAgentKeys({ agentFlag: flags.agent })
+    if (agentKeys.length === 0) {
+      agentKeys = await pickProjectAgents({ projectAgents: listProjectAgents(cwd) })
+    }
   }
 
   // Install each selection
@@ -157,7 +160,7 @@ function getMcpTargets(scope, agentKeys, cwd) {
     ]
   }
 
-  const targets = [{ path: `${cwd}/.mcp.json`, label: 'Claude Code (project)' }]
+  const targets = []
 
   for (const key of agentKeys) {
     const agent = AGENTS[key]
@@ -175,6 +178,16 @@ function resolveGlobalAgentKeys({ agentFlag }) {
   if (!GLOBAL_SKILL_AGENTS[agentFlag]) {
     const valid = Object.keys(GLOBAL_SKILL_AGENTS).join(', ')
     throw new Error(`Unknown agent "${agentFlag}". Valid global agents: ${valid}`)
+  }
+  return [agentFlag]
+}
+
+// Resolve project agent keys from --agent flag, or empty to trigger picker
+function resolveProjectAgentKeys({ agentFlag }) {
+  if (!agentFlag) return []
+  if (!AGENTS[agentFlag]) {
+    const valid = Object.keys(AGENTS).join(', ')
+    throw new Error(`Unknown agent "${agentFlag}". Valid project agents: ${valid}`)
   }
   return [agentFlag]
 }

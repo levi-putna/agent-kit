@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdirSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
-import { detectAgents, canonicalSkillsDir, AGENTS, GLOBAL_PATHS, GLOBAL_SKILL_AGENTS } from './agents.js'
+import { detectAgents, listProjectAgents, canonicalSkillsDir, AGENTS, GLOBAL_PATHS, GLOBAL_SKILL_AGENTS } from './agents.js'
 
 describe('detectAgents', () => {
   let tmp
@@ -38,6 +38,29 @@ describe('detectAgents', () => {
     mkdirSync(join(tmp, '.windsurf'), { recursive: true })
     const found = detectAgents(tmp)
     assert.equal(found.length, 3)
+    rmSync(tmp, { recursive: true, force: true })
+  })
+})
+
+describe('listProjectAgents', () => {
+  let tmp
+
+  test('returns all agents with detected false when none present', () => {
+    tmp = mkdirSync(join(tmpdir(), `agent-kit-test-${Date.now()}`), { recursive: true })
+    const agents = listProjectAgents(tmp)
+    assert.equal(agents.length, Object.keys(AGENTS).length)
+    assert.ok(agents.every(a => a.detected === false))
+    rmSync(tmp, { recursive: true, force: true })
+  })
+
+  test('marks detected agents correctly', () => {
+    tmp = join(tmpdir(), `agent-kit-test-${Date.now()}`)
+    mkdirSync(join(tmp, '.cursor'), { recursive: true })
+    const agents = listProjectAgents(tmp)
+    const cursor = agents.find(a => a.key === 'cursor')
+    assert.ok(cursor)
+    assert.equal(cursor.detected, true)
+    assert.equal(agents.filter(a => a.detected).length, 1)
     rmSync(tmp, { recursive: true, force: true })
   })
 })

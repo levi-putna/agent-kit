@@ -41,13 +41,13 @@ function printHelp() {
     --skill <name>    Install a specific skill
     --mcp <name>      Install a specific MCP server
     --global, -g      Install globally (~/.claude/skills/, ~/.cursor/skills/)
-    --agent <name>    Target a global agent (claude, cursor) — use with --global
-    --project, -p     Install to project (detects present agents)
+    --agent <name>    Target agent (claude, cursor, windsurf, …) — use with --global or --project
+    --project, -p     Install to project (.agents/skills/ + chosen agent directories)
 
   Examples:
     agent-kit add levi-putna/my-skills
     agent-kit add levi-putna/my-skills --skill code-review
-    agent-kit add levi-putna/my-skills --skill code-review --global --agent cursor
+    agent-kit add levi-putna/my-skills --skill code-review --project --agent cursor
     agent-kit add levi-putna/my-skills --mcp postgres --global
     agent-kit list levi-putna/my-skills
 `)

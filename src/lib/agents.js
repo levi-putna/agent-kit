@@ -76,6 +76,17 @@ export function detectAgents(cwd) {
     .map(([key, agent]) => ({ key, ...agent }))
 }
 
+/**
+ * All agents available for project-scoped installs, with detection status.
+ */
+export function listProjectAgents(cwd) {
+  return Object.entries(AGENTS).map(([key, agent]) => ({
+    key,
+    name: agent.name,
+    detected: agent.detect(cwd),
+  }))
+}
+
 function getDesktopConfigPath() {
   switch (process.platform) {
     case 'darwin':
