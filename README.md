@@ -24,11 +24,13 @@ A configuration manager for AI coding agents. Install skills and MCP servers fro
 npm install -g @levi-putna/agent-kit
 ```
 
-Or run without installing:
+Or run without installing (use `@latest` so npx does not reuse a cached older release):
 
 ```sh
-npx @levi-putna/agent-kit add owner/repo
+npx @levi-putna/agent-kit@latest add owner/repo
 ```
+
+The same `@latest` suffix works for any command, for example `npx @levi-putna/agent-kit@latest list owner/repo`.
 
 ### Commands
 
