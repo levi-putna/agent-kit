@@ -1,6 +1,6 @@
 import * as p from '@clack/prompts'
 import { parseRepo, listSkills, listMcpServers, fetchSkillFiles, fetchMcpDefinition } from '../lib/github.js'
-import { detectAgents, GLOBAL_PATHS, AGENTS } from '../lib/agents.js'
+import { detectAgents, GLOBAL_PATHS, GLOBAL_SKILL_AGENTS, AGENTS } from '../lib/agents.js'
 import { installSkillGlobal, installSkillFiles, symlinkOrCopy } from '../lib/installer.js'
 import { mergeMcpServer, buildServerConfig } from '../lib/mcp.js'
 import { addSkillToLockfile, addMcpToLockfile } from '../lib/lockfile.js'
@@ -9,6 +9,7 @@ import {
   pickItems,
   pickScope,
   pickAgents,
+  pickGlobalAgents,
   confirmWrite,
   promptEnvVars,
 } from '../ui/picker.js'
@@ -52,18 +53,25 @@ export async function add(repoArg, flags) {
   const detectedAgents = detectAgents(cwd)
 
   if (!scope) {
-    scope = await pickScope(detectedAgents)
+    scope = await pickScope({ detectedAgents })
   }
 
   let agentKeys = []
-  if (scope === 'project' && detectedAgents.length > 0) {
+  let globalAgentKeys = []
+
+  if (scope === 'global') {
+    globalAgentKeys = resolveGlobalAgentKeys({ agentFlag: flags.agent })
+    if (globalAgentKeys.length === 0) {
+      globalAgentKeys = await pickGlobalAgents({ globalSkillAgents: GLOBAL_SKILL_AGENTS })
+    }
+  } else if (scope === 'project' && detectedAgents.length > 0) {
     agentKeys = await pickAgents(detectedAgents)
   }
 
   // Install each selection
   for (const item of selections) {
     if (item.type === 'skill') {
-      await installSkill({ owner, repo, branch, skillName: item.name, scope, agentKeys, cwd })
+      await installSkill({ owner, repo, branch, skillName: item.name, scope, agentKeys, globalAgentKeys, cwd })
     } else {
       await installMcp({ owner, repo, branch, serverName: item.name, scope, agentKeys, cwd })
     }
@@ -72,17 +80,21 @@ export async function add(repoArg, flags) {
   p.outro('Done!')
 }
 
-async function installSkill({ owner, repo, branch, skillName, scope, agentKeys, cwd }) {
+async function installSkill({ owner, repo, branch, skillName, scope, agentKeys, globalAgentKeys, cwd }) {
   const spinner = p.spinner()
   spinner.start(`Fetching ${skillName}`)
   const files = await fetchSkillFiles(owner, repo, skillName, branch)
   spinner.stop(`Fetched ${skillName} (${files.length} file(s))`)
 
   if (scope === 'global') {
-    const confirmed = await confirmWrite(GLOBAL_PATHS.claudeSkills, 'write skill to')
-    if (!confirmed) return
-    installSkillGlobal(skillName, files)
-    p.log.success(`Installed ${skillName} → ~/.claude/skills/`)
+    for (const key of globalAgentKeys) {
+      const agent = GLOBAL_SKILL_AGENTS[key]
+      if (!agent) continue
+      const confirmed = await confirmWrite(agent.skillsDir, `write skill to ${agent.name}`)
+      if (!confirmed) continue
+      installSkillGlobal({ skillName, files, skillsDir: agent.skillsDir })
+      p.log.success(`Installed ${skillName} → ${agent.displayPath}`)
+    }
     return
   }
 
@@ -155,4 +167,14 @@ function getMcpTargets(scope, agentKeys, cwd) {
   }
 
   return targets
+}
+
+// Resolve global agent keys from --agent flag, or empty to trigger picker
+function resolveGlobalAgentKeys({ agentFlag }) {
+  if (!agentFlag) return []
+  if (!GLOBAL_SKILL_AGENTS[agentFlag]) {
+    const valid = Object.keys(GLOBAL_SKILL_AGENTS).join(', ')
+    throw new Error(`Unknown agent "${agentFlag}". Valid global agents: ${valid}`)
+  }
+  return [agentFlag]
 }

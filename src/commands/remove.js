@@ -2,7 +2,7 @@ import * as p from '@clack/prompts'
 import { removeSkill } from '../lib/installer.js'
 import { removeMcpServer } from '../lib/mcp.js'
 import { removeFromLockfile, readLockfile } from '../lib/lockfile.js'
-import { GLOBAL_PATHS, AGENTS, canonicalSkillsDir } from '../lib/agents.js'
+import { GLOBAL_SKILL_AGENTS, AGENTS, canonicalSkillsDir } from '../lib/agents.js'
 import { confirmWrite } from '../ui/picker.js'
 
 export async function remove(name, flags) {
@@ -18,11 +18,16 @@ export async function remove(name, flags) {
   const isMcp = name in lock.mcp
 
   if (!isSkill && !isMcp) {
-    // Try global skills
-    const removed = removeSkill(GLOBAL_PATHS.claudeSkills, name)
-    if (removed) {
-      p.log.success(`Removed global skill: ${name}`)
-    } else {
+    // Try global skills across all supported global agents
+    let removedAny = false
+    for (const agent of Object.values(GLOBAL_SKILL_AGENTS)) {
+      const removed = removeSkill(agent.skillsDir, name)
+      if (removed) {
+        p.log.success(`Removed global skill from ${agent.displayPath}: ${name}`)
+        removedAny = true
+      }
+    }
+    if (!removedAny) {
       p.log.error(`"${name}" not found in lockfile or global skills.`)
     }
     return

@@ -52,7 +52,16 @@ agent-kit add levi-putna/my-skills --mcp postgres
 agent-kit add levi-putna/my-skills --global
 ```
 
-Global skills are installed to `~/.claude/skills/` and are available in Claude Code and the Claude desktop app.
+Prompts you to choose global agents (Claude Code and/or Cursor). Skills are installed to:
+
+- `~/.claude/skills/` — Claude Code and Claude desktop app
+- `~/.cursor/skills/` — Cursor (all projects)
+
+Install to Cursor only:
+
+```sh
+agent-kit add levi-putna/my-skills --skill code-review --global --agent cursor
+```
 
 ### Install to your project
 
@@ -78,7 +87,7 @@ agent-kit remove code-review # remove a skill or MCP server
 |---|---|---|
 | Claude Code | ✅ `~/.claude/skills/` (global) · `.claude/skills/` (project) | ✅ `~/.claude.json` · `.mcp.json` |
 | Claude Desktop | ✅ via global install | ✅ `~/Library/Application Support/Claude/...` |
-| Cursor | ✅ `.cursor/skills/` | ✅ `.cursor/mcp.json` |
+| Cursor | ✅ `~/.cursor/skills/` (global) · `.cursor/skills/` (project) | ✅ `.cursor/mcp.json` |
 | Windsurf | ✅ `.windsurf/skills/` | ✅ `.windsurf/mcp.json` |
 | GitHub Copilot | ✅ `.github/skills/` | ✅ `.vscode/mcp.json` |
 | Cline | ✅ `.cline/skills/` | — |

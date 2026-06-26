@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdirSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
-import { detectAgents, canonicalSkillsDir, AGENTS, GLOBAL_PATHS } from './agents.js'
+import { detectAgents, canonicalSkillsDir, AGENTS, GLOBAL_PATHS, GLOBAL_SKILL_AGENTS } from './agents.js'
 
 describe('detectAgents', () => {
   let tmp
@@ -71,8 +71,24 @@ describe('GLOBAL_PATHS', () => {
     assert.ok(GLOBAL_PATHS.claudeSkills.includes('skills'))
   })
 
+  test('cursorSkills path contains .cursor/skills', () => {
+    assert.ok(GLOBAL_PATHS.cursorSkills.includes('.cursor'))
+    assert.ok(GLOBAL_PATHS.cursorSkills.includes('skills'))
+  })
+
   test('claudeDesktopConfig path is set', () => {
     assert.ok(typeof GLOBAL_PATHS.claudeDesktopConfig === 'string')
     assert.ok(GLOBAL_PATHS.claudeDesktopConfig.length > 0)
+  })
+})
+
+describe('GLOBAL_SKILL_AGENTS', () => {
+  test('includes claude and cursor with skillsDir and displayPath', () => {
+    assert.ok(GLOBAL_SKILL_AGENTS.claude)
+    assert.ok(GLOBAL_SKILL_AGENTS.cursor)
+    assert.ok(GLOBAL_SKILL_AGENTS.claude.skillsDir.includes('.claude'))
+    assert.ok(GLOBAL_SKILL_AGENTS.cursor.skillsDir.includes('.cursor'))
+    assert.ok(GLOBAL_SKILL_AGENTS.claude.displayPath.includes('~/.claude'))
+    assert.ok(GLOBAL_SKILL_AGENTS.cursor.displayPath.includes('~/.cursor'))
   })
 })

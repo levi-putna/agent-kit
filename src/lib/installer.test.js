@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdirSync, rmSync, existsSync, readFileSync, lstatSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
-import { installSkillFiles, symlinkOrCopy, removeSkill } from './installer.js'
+import { installSkillFiles, installSkillGlobal, symlinkOrCopy, removeSkill } from './installer.js'
 
 describe('installer', () => {
   let tmp
@@ -72,6 +72,14 @@ describe('installer', () => {
       assert.doesNotThrow(() => {
         symlinkOrCopy(canonical, agentSkillsDir, 'my-skill', sampleFiles)
       })
+    })
+  })
+
+  describe('installSkillGlobal', () => {
+    test('installs to a custom global skills directory', () => {
+      const globalDir = join(tmp, 'global-skills')
+      installSkillGlobal({ skillName: 'my-skill', files: sampleFiles, skillsDir: globalDir })
+      assert.ok(existsSync(join(globalDir, 'my-skill', 'SKILL.md')))
     })
   })
 

@@ -15,6 +15,7 @@ function parseFlags(args) {
     project: args.includes('--project') || args.includes('-p'),
     skill: flagValue(args, '--skill'),
     mcp: flagValue(args, '--mcp'),
+    agent: flagValue(args, '--agent'),
   }
   const positional = args.filter(a => !a.startsWith('-'))
   return { flags, positional }
@@ -39,12 +40,14 @@ function printHelp() {
   Options for add:
     --skill <name>    Install a specific skill
     --mcp <name>      Install a specific MCP server
-    --global, -g      Install to global Claude paths (~/.claude/skills/)
+    --global, -g      Install globally (~/.claude/skills/, ~/.cursor/skills/)
+    --agent <name>    Target a global agent (claude, cursor) — use with --global
     --project, -p     Install to project (detects present agents)
 
   Examples:
     agent-kit add levi-putna/my-skills
     agent-kit add levi-putna/my-skills --skill code-review
+    agent-kit add levi-putna/my-skills --skill code-review --global --agent cursor
     agent-kit add levi-putna/my-skills --mcp postgres --global
     agent-kit list levi-putna/my-skills
 `)

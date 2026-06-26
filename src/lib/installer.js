@@ -12,9 +12,9 @@ export function installSkillFiles(targetDir, skillName, files) {
   return skillDir
 }
 
-// Install a skill globally to ~/.claude/skills/
-export function installSkillGlobal(skillName, files) {
-  return installSkillFiles(GLOBAL_PATHS.claudeSkills, skillName, files)
+// Install a skill globally to a user-level skills directory
+export function installSkillGlobal({ skillName, files, skillsDir = GLOBAL_PATHS.claudeSkills }) {
+  return installSkillFiles(skillsDir, skillName, files)
 }
 
 // Create a symlink from agentSkillDir/skillName → canonical/skillName

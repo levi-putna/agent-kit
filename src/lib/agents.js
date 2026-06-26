@@ -42,9 +42,24 @@ export const AGENTS = {
   },
 }
 
+// Agents that support global (user-level) skill installs
+export const GLOBAL_SKILL_AGENTS = {
+  claude: {
+    name: 'Claude Code',
+    skillsDir: join(homedir(), '.claude', 'skills'),
+    displayPath: '~/.claude/skills/',
+  },
+  cursor: {
+    name: 'Cursor',
+    skillsDir: join(homedir(), '.cursor', 'skills'),
+    displayPath: '~/.cursor/skills/',
+  },
+}
+
 // Global paths (not project-scoped)
 export const GLOBAL_PATHS = {
-  claudeSkills: join(homedir(), '.claude', 'skills'),
+  claudeSkills: GLOBAL_SKILL_AGENTS.claude.skillsDir,
+  cursorSkills: GLOBAL_SKILL_AGENTS.cursor.skillsDir,
   claudeJson: join(homedir(), '.claude.json'),
   claudeDesktopConfig: getDesktopConfigPath(),
 }
