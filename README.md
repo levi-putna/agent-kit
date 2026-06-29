@@ -155,6 +155,159 @@ Valid values for `--agent`: `claude`, `cursor`, `windsurf`, `copilot`, `cline`, 
 
 ---
 
+## UI Component Development Skills
+
+This repository includes a comprehensive set of skills for building and testing UI components using modern best practices. These skills work both **in isolation** (for focused component development) and **as part of the build flow** (when the agent needs to create or test UI elements).
+
+### Available UI Skills
+
+| Skill | Purpose | Use In Isolation | Use In Build Flow |
+|-------|---------|------------------|-------------------|
+| `ui-storybook-setup` | Set up Storybook for component isolation | When initialising component testing | When project needs component isolation |
+| `ui-component-create` | Create reusable components following shadcn/ui patterns | When building individual components | When app needs new UI elements |
+| `ui-component-test` | Add interaction tests with play functions | When adding tests to components | When validating component behaviour |
+| `ui-visual-regression` | Set up visual regression testing (Chromatic/Percy) | When configuring visual tests | When preventing visual regressions |
+| `ui-accessibility-test` | Test components for WCAG compliance | When ensuring accessibility | When validating a11y requirements |
+| `ui-component-library` | Architect and govern a component library | When building design systems | When establishing standards |
+
+### Workflow: Isolation vs Build Flow
+
+#### Isolation Mode (Component Development)
+
+Use skills independently to develop, test, and refine components:
+
+```
+Developer/Agent Task: "Create a new Button component"
+
+┌─────────────────────────────────────┐
+│  1. Use: ui-component-create        │
+│     - Follow shadcn/ui patterns     │
+│     - Implement with TypeScript     │
+│     - Create Storybook stories      │
+└─────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────┐
+│  2. Use: ui-component-test          │
+│     - Add interaction tests         │
+│     - Test keyboard navigation      │
+│     - Validate user behaviour       │
+└─────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────┐
+│  3. Use: ui-accessibility-test      │
+│     - Run axe-core checks           │
+│     - Test screen reader support    │
+│     - Validate WCAG compliance      │
+└─────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────┐
+│  4. Use: ui-visual-regression       │
+│     - Capture visual baselines      │
+│     - Set up Chromatic/Percy        │
+│     - Prevent unintended changes    │
+└─────────────────────────────────────┘
+
+Result: Fully tested, accessible, production-ready component
+```
+
+#### Build Flow Mode (Application Development)
+
+Skills automatically kick in when agents build features:
+
+```
+User Request: "Build a user profile page"
+
+Agent Analysis:
+┌─────────────────────────────────────┐
+│  Needs: UserCard component          │
+│  Status: Does not exist             │
+│  Action: Trigger ui-component-create│
+└─────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────┐
+│  1. ui-component-create runs        │
+│     Creates UserCard component      │
+│     with proper patterns            │
+└─────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────┐
+│  2. ui-component-test runs          │
+│     Adds interaction tests          │
+│     Validates behaviour             │
+└─────────────────────────────────────┘
+            ↓
+┌─────────────────────────────────────┐
+│  3. Continue with page implementation│
+│     Uses newly created component    │
+└─────────────────────────────────────┘
+
+Agent proceeds with confidence that components are tested and reusable
+```
+
+### Key Design Principles
+
+1. **Prefer Existing Components**: Skills encourage using shadcn/ui and Vercel AI Elements before creating custom components
+2. **Testable by Default**: Every component created includes tests (interaction, visual, accessibility)
+3. **Reusability**: Components are built to be reusable across the application
+4. **Isolation**: Storybook enables component development without running the full app
+5. **Quality Gates**: Automated testing prevents regressions
+
+### Integration with Agent Workflow
+
+When an agent is asked to build UI:
+
+1. **Check Storybook**: Does the component already exist?
+2. **Use Primitives**: Can this be built with shadcn/ui or Vercel AI Elements?
+3. **Create if Needed**: Trigger `ui-component-create` skill
+4. **Test Immediately**: Run `ui-component-test` and `ui-accessibility-test`
+5. **Visual Baseline**: Capture snapshot with `ui-visual-regression`
+6. **Use in App**: Now safely use the component in the application
+
+### Example: Agent Using UI Skills
+
+```
+User: "Add a search feature with autocomplete"
+
+Agent thinking:
+- Needs: SearchBar component with dropdown
+- Check: Does SearchBar exist in Storybook? → No
+- Action: Create component using ui-component-create skill
+
+Agent: *reads ui-component-create skill*
+Agent: *creates SearchBar component*
+Agent: *creates SearchBar.stories.tsx*
+Agent: *reads ui-component-test skill*
+Agent: *adds interaction tests for typing and selecting*
+Agent: *reads ui-accessibility-test skill*
+Agent: *ensures keyboard navigation and screen reader support*
+Agent: *integrates SearchBar into the search page*
+
+Result: Production-ready, tested, accessible SearchBar component
+```
+
+### Setting Up UI Skills in Your Project
+
+Install the UI skills for your project:
+
+```bash
+# Install all UI skills
+npx @levi-putna/agent-kit@latest add levi-putna/agent-kit --project
+
+# Or install specific skills
+npx @levi-putna/agent-kit@latest add levi-putna/agent-kit --skill ui-storybook-setup --project
+npx @levi-putna/agent-kit@latest add levi-putna/agent-kit --skill ui-component-create --project
+npx @levi-putna/agent-kit@latest add levi-putna/agent-kit --skill ui-component-test --project
+```
+
+### For Teams
+
+- **Design Systems Team**: Use `ui-component-library` to establish governance
+- **Individual Contributors**: Use `ui-component-create` for day-to-day work
+- **QA Engineers**: Use testing skills (`ui-component-test`, `ui-accessibility-test`, `ui-visual-regression`)
+- **Product Teams**: Use all skills as part of the build flow
+
+---
+
 ## For skill & MCP developers
 
 Publish skills and MCP server definitions in a GitHub repo. Users install them with `@levi-putna/agent-kit`. No npm package, registry, or approval process is required.
